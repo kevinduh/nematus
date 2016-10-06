@@ -675,6 +675,7 @@ def train(dim_word=100,  # word vector dimensionality
           reload_=False,
           overwrite=False,
           external_validation_script=None,
+          external_validation_script_param=None,
           shuffle_each_epoch=True,
           finetune=False,
           finetune_only_last=False,
@@ -1031,10 +1032,10 @@ def train(dim_word=100,  # word vector dimensionality
                     print "Calling external validation script"
                     print 'Saving  model...',
                     params = unzip_from_theano(tparams)
-                    numpy.savez(saveto +'.dev', history_errs=history_errs, uidx=uidx, **params)
-                    json.dump(model_options, open('%s.dev.npz.json' % saveto, 'wb'), indent=2)
+                    numpy.savez(saveto +'.valid', history_errs=history_errs, uidx=uidx, **params)
+                    json.dump(model_options, open('%s.valid.npz.json' % saveto, 'wb'), indent=2)
                     print 'Done'
-                    p = Popen([external_validation_script])
+                    p = Popen([external_validation_script, external_validation_script_param])
 
             # finish after this many updates
             if uidx >= finish_after:
