@@ -100,7 +100,7 @@ def print_matrices(mm, file):
 
 
 def main(models, source_file, saveto, save_alignment=None, k=5,
-         normalize=False, n_process=5, chr_level=False, verbose=False, nbest=False, suppress_unk=False, a_json=False, print_word_probabilities=False):
+         normalize=False, n_process=5, chr_level=False, verbose=False, nbest=False, suppress_unk=False, a_json=False, print_word_probabilities=False, print_score=False):
     # load model model_options
     options = []
     for model in models:
@@ -238,7 +238,8 @@ def main(models, source_file, saveto, save_alignment=None, k=5,
                     print_matrix(alignment[j], save_alignment)
         else:
             samples, scores, word_probs, alignment = trans
-    
+            if print_score:
+                saveto.write("%f ||| " % scores)
             saveto.write(_seqs2words(samples) + "\n")
             if print_word_probabilities:
                 for prob in word_probs:
@@ -281,10 +282,10 @@ if __name__ == "__main__":
                         help="Write n-best list (of size k)")
     parser.add_argument('--suppress-unk', action="store_true", help="Suppress hypotheses containing UNK.")
     parser.add_argument('--print-word-probabilities', '-wp',action="store_true", help="Print probabilities of each world")
-
+    parser.add_argument('--print-score', action="store_true", help="Print score of each output")
     args = parser.parse_args()
 
     main(args.models, args.input,
          args.output, k=args.k, normalize=args.n, n_process=args.p,
          chr_level=args.c, verbose=args.v, nbest=args.n_best, suppress_unk=args.suppress_unk, 
-         print_word_probabilities = args.print_word_probabilities, save_alignment=args.output_alignment, a_json=args.json_alignment)
+         print_word_probabilities = args.print_word_probabilities, save_alignment=args.output_alignment, a_json=args.json_alignment, print_score = args.print_score)
